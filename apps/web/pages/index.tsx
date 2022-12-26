@@ -1,6 +1,10 @@
+import {Grid} from "../components/Grid";
+
 export function Index() {
   return (
-    <div>Hello world!</div>
+    <Grid>
+      <div className="text-red-500">Hello world!</div>
+    </Grid>
   );
 }
 
