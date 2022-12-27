@@ -1,12 +1,15 @@
 import classNames from 'classnames'
+import { ButtonHTMLAttributes } from 'react'
 
 export interface ButtonProps {
   title: string
+  htmlButtonProps?: ButtonHTMLAttributes<HTMLButtonElement>
 }
 
 export function Button(props: ButtonProps) {
   return (
     <button
+      {...props.htmlButtonProps}
       className={classNames(
         'bg-blue-400',
         'rounded-lg shadow-sm shadow-neutral-400',
