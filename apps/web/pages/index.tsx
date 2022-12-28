@@ -3,13 +3,29 @@ import {Grid} from "../components/Grid";
 import {Button} from "../components/Button";
 import {Input} from "../components/Input";
 import { Card } from "../components/Card";
-import { FormEvent } from "react";
+import { FormEvent, useEffect } from "react";
+
+import { useStage } from "../hooks/useStage";
+
+import { Metadata, Stage } from '@stative/interfaces'
+
+interface State {
+  metadata?: Metadata
+}
+
+const initialState: State = {}
 
 export function Index() {
+  const stage = useStage<State>(initialState)
+
+  useEffect(() => {
+    console.log(stage.state.metadata)
+  }, [stage.state.metadata])
+
   return (
     <Grid>
       <form
-        onSubmit={submitSearch()} className="flex my-10"
+        onSubmit={submitSearch(stage)} className="flex my-10"
       >
         <div className="mr-5 flex flex-1">
           <Input
@@ -30,34 +46,50 @@ export function Index() {
         ></Button>
       </form>
 
-      <Card>
-        <div className="min-h-[300px] flex justify-center items-center">
-          <div className="text-xs text-center text-neutral-500">There are no songs loaded.</div>
-        </div>
-      </Card>
-
-      <h2 className="mb-2.5 text-neutral-500">Information</h2>
-      <Card>
-        <div className="flex">
-          <div>
-            <img
-              width={300}
-              height={300}
-              alt="Song cover"
-              src="https://lh3.googleusercontent.com/ThA2l-LJ61FO1uVSs8g9WOh-mWdtDmnOHH0USdJS-Uv8kkHgWk7X1QCGYUzmVfCZZHDujUcTJknLaA8=w544-h544-l90-rj"
-            />
+      {!stage.state.metadata && (
+        <Card>
+          <div className="min-h-[300px] flex justify-center items-center">
+            <div className="text-xs text-center text-neutral-500">There are no songs loaded.</div>
           </div>
+        </Card>
+      )}
 
-          <div>
+      {stage.state.metadata && (
+        <>
+          <h2 className="mb-2.5 text-neutral-500">Information</h2>
+          <Card>
+            <div className="min-h-[300px] flex justify-center items-center">
+              <div className="text-xs text-center text-neutral-500">Inputs.</div>
+            </div>
+          </Card>
+        </>
+      )}
 
-          </div>
-        </div>
-      </Card>
+      {stage.state.metadata && (
+        <>
+          <h2 className="mb-2.5 text-neutral-500">Preview</h2>
+          <Card>
+            <div className="flex">
+              <div className="w-[300px] h-[300px]">
+                <img
+                  className="object-cover object-center h-[inherit]"
+                  alt="Song cover"
+                  src={stage.state.metadata.image}
+                />
+              </div>
+
+              <div>
+
+              </div>
+            </div>
+          </Card>
+        </>
+      )}
     </Grid>
   );
 }
 
-function submitSearch() {
+function submitSearch(stage: Stage<State>) {
   return async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
@@ -65,9 +97,8 @@ function submitSearch() {
 
     if (searchValue) {
       const metadata = await fetchMetadata({ domain: searchValue.value })
-      console.log(metadata)
+      stage.commitState({ metadata })
     }
-
   }
 }
 

@@ -1,1 +1,3 @@
-export * from './Hello';
+export * from './Hello'
+export * from './Stage'
+export * from './Metadata'
