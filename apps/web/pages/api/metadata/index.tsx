@@ -17,15 +17,15 @@ export default async function handler(
   const validDomain = domain.search('https://') != -1
 
   if (validDomain) {
-
+    
     const result = await fetch(domain)
     const text = await result.text()
-  
+    
     const metascraper = MetaParser([
       MetaTitleRule(),
       MetaImageRule(),
     ])
-  
+    
     const response = await metascraper({
       url: domain,
       html: text

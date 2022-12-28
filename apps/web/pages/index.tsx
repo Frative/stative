@@ -3,23 +3,32 @@ import {Grid} from "../components/Grid";
 import {Button} from "../components/Button";
 import {Input} from "../components/Input";
 import { Card } from "../components/Card";
+import { FormEvent } from "react";
 
 export function Index() {
   return (
     <Grid>
-      <Card>
-        <div className="flex">
-          <div className="mr-5 flex flex-1">
-            <Input htmlInputProps={{ placeholder: "Paste a link here from spotify, soundcloud, youtube, etc..." }} />
-          </div>
-          <Button
-            title="Search song"
-            htmlButtonProps={{
-              onClick: null
-            }}
-          ></Button>
+      <form
+        onSubmit={submitSearch()} className="flex my-10"
+      >
+        <div className="mr-5 flex flex-1">
+          <Input
+            htmlInputProps={{
+              placeholder: "Paste a link here from spotify, soundcloud, youtube, etc...",
+              type: 'text',
+              id: 'search',
+              name: 'search',
+            }} 
+          />
         </div>
-      </Card>
+        <Button
+          title="Search song"
+          htmlButtonProps={{
+            type: 'submit',
+            onClick: null
+          }}
+        ></Button>
+      </form>
 
       <Card>
         <div className="min-h-[300px] flex justify-center items-center">
@@ -46,6 +55,25 @@ export function Index() {
       </Card>
     </Grid>
   );
+}
+
+function submitSearch() {
+  return async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+
+    const searchValue: HTMLInputElement = e.currentTarget.elements['search']
+
+    if (searchValue) {
+      const metadata = await fetchMetadata({ domain: searchValue.value })
+      console.log(metadata)
+    }
+
+  }
+}
+
+async function fetchMetadata(args: { domain: string }) {
+  const response = await fetch('/api/metadata?domain=' + args.domain)
+  return await response.json()
 }
 
 export default Index;
