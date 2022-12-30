@@ -17,7 +17,8 @@ export function Input(props: InputProps) {
           'border-2 border-blue-400 border-solid',
           'rounded-lg',
           'px-2.5',
-          'text-xs'
+          'text-xs',
+          'min-h-[36px]'
         )}
       />
     </>
