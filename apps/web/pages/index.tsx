@@ -3,35 +3,42 @@ import {Grid} from "../components/Grid";
 import {Button} from "../components/Button";
 import {Input} from "../components/Input";
 import { Card } from "../components/Card";
-import { FormEvent, useEffect } from "react";
+import { ChangeEvent, FormEvent, useEffect } from "react";
 
 import { useStage } from "../hooks/useStage";
 
 import { Metadata, Stage } from '@stative/interfaces'
 
-import classNames from "classnames";
-
 interface State {
   metadata?: Metadata
-  backgroundColor?: string
+  formMusicalCover: {
+    author: string
+    name: string
+    phrase: string
+  }
+  
 }
 
-const initialState: State = {}
+const initialState: State = {
+  formMusicalCover: {
+    author: 'Author',
+    name: 'Song name',
+    phrase: ''
+  }
+}
 
 export function Index() {
   const stage = useStage<State>(initialState)
 
   useEffect(() => {
     if (stage.state.metadata) {
-      // setAverageColor(stage)
-      const r = getRandom(0, 255)
-      const g = getRandom(0, 255)
-      const b = getRandom(0, 255)
-
-      console.log(r, g, b)
-
-      stage.commitState({ backgroundColor: `rgb(${r},${g},${b})` })
-
+      stage.commitState({
+        ...stage.state,
+        formMusicalCover: {
+          ...stage.state.formMusicalCover,
+          name: stage.state.metadata.title,
+        }
+      })
     }
   }, [stage.state.metadata])
 
@@ -71,16 +78,15 @@ export function Index() {
         <>
           <h2 className="mb-2.5 text-neutral-500">Information</h2>
           <Card>
-            {/* <div className="min-h-[300px] flex justify-center items-center">
-              <div className="text-xs text-center text-neutral-500">Inputs.</div>
-            </div> */}
             <div className="mb-5">
               <h3 className="mb-1 text-neutral-500 text-xs font-light">Song name</h3>
               <Input
                 htmlInputProps={{
                   type: 'text',
-                  id: 'title',
-                  name: 'title'
+                  id: 'name',
+                  name: 'name',
+                  value: stage.state.formMusicalCover.name,
+                  onChange: setFormMusicalCover(stage)
                 }}
               />
             </div>
@@ -90,8 +96,10 @@ export function Index() {
               <Input
                 htmlInputProps={{
                   type: 'text',
-                  id: 'title',
-                  name: 'title'
+                  id: 'author',
+                  name: 'author',
+                  value: stage.state.formMusicalCover.author,
+                  onChange: setFormMusicalCover(stage)
                 }}
               />
             </div>
@@ -101,8 +109,10 @@ export function Index() {
               <Input
                 htmlInputProps={{
                   type: 'text',
-                  id: 'title',
-                  name: 'title'
+                  id: 'phrase',
+                  name: 'phrase',
+                  value: stage.state.formMusicalCover.phrase,
+                  onChange: setFormMusicalCover(stage)
                 }}
               />
             </div>
@@ -128,21 +138,23 @@ export function Index() {
                   </div>
 
                   <div className="ml-5">
-                    <div className="uppercase text-xl font-medium">53 Thieves</div>
-                    <div className="text-sm uppercase">what you do to me</div>
+                    <div className="uppercase text-xl font-medium">{ stage.state.formMusicalCover.author }</div>
+                    <div className="text-sm uppercase">{ stage.state.formMusicalCover.name }</div>
                   </div>
                 </div>
 
                 <div className="flex flex-1 items-center text-2xl font-light">
-                  <span className="text-center">
-                    <span>&quot;</span>
-                    <span>Something takes a part of me, every time you leave.</span>
-                    <span>&quot;</span>
-                  </span>
+                  {stage.state.formMusicalCover.phrase && (
+                    <span className="text-center">
+                      <span>&quot;</span>
+                      <span>{ stage.state.formMusicalCover.phrase }</span>
+                      <span>&quot;</span>
+                    </span>
+                  )}
                 </div>
               </div>
 
-              <div className="text-xs text-center my-2.5">STATIVE.</div>
+              <div className="text-xs text-center my-2.5 tracking-widest">STATIVE</div>
             </div>
           </Card>
         </>
@@ -159,8 +171,21 @@ function submitSearch(stage: Stage<State>) {
 
     if (searchValue) {
       const metadata = await fetchMetadata({ domain: searchValue.value })
-      stage.commitState({ metadata })
+      stage.commitState({ ...stage.state, metadata })
     }
+  }
+}
+
+function setFormMusicalCover(stage: Stage<State>) {
+  return (e: ChangeEvent<HTMLInputElement>) => {
+    const key = e.target.name
+
+    stage.commitState({
+      ...stage.state, formMusicalCover: {
+        ...stage.state.formMusicalCover,
+        [key]: e.target.value
+      }
+    })
   }
 }
 
