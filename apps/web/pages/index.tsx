@@ -131,7 +131,7 @@ export function Index() {
                 <div className="flex w-full">
                   <div className="w-[150px] h-[150px]">
                     <img
-                      className="object-cover object-center h-[inherit]"
+                      className="object-cover object-center h-[inherit] rounded-md"
                       alt="Song cover"
                       src={stage.state.metadata.image}
                     />
@@ -145,11 +145,11 @@ export function Index() {
 
                 <div className="flex flex-1 items-center text-2xl font-light">
                   {stage.state.formMusicalCover.phrase && (
-                    <span className="text-center">
+                    <div className="text-center flex-1">
                       <span>&quot;</span>
                       <span>{ stage.state.formMusicalCover.phrase }</span>
                       <span>&quot;</span>
-                    </span>
+                    </div>
                   )}
                 </div>
               </div>
