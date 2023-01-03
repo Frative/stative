@@ -20,6 +20,7 @@ interface State {
 }
 
 const initialState: State = {
+  metadata: undefined,
   formMusicalCover: {
     author: 'Author',
     name: 'Song name',
@@ -129,7 +130,7 @@ export function Index() {
             >
               <div className="shadow-neutral-500 w-full h-full rounded-lg shadow-sm py-10 px-5 flex flex-col">
                 <div className="flex w-full">
-                  <div className="w-[150px] h-[150px]">
+                  <div className="w-[150px] h-[150px] min-w-[150px]">
                     <img
                       className="object-cover object-center h-[inherit] rounded-md"
                       alt="Song cover"
@@ -159,6 +160,21 @@ export function Index() {
           </Card>
         </>
       )}
+
+      <div className="flex justify-between">
+        <Button
+          title="Generate"
+        ></Button>
+
+        <div className="ml-2.5">
+          <Button
+            title="Reset"
+            htmlButtonProps={{
+              onClick: () => stage.commitState(initialState)
+            }}
+          ></Button>
+        </div>
+      </div>
     </Grid>
   );
 }
