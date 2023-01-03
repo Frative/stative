@@ -194,15 +194,4 @@ async function fetchMetadata(args: { domain: string }) {
   return await response.json()
 }
 
-// async function setAverageColor(stage: Stage<State>) {
-//   if (stage.state.metadata) {
-//     const color = await prominent(stage.state.metadata.image, { amount: 1 })
-//     console.log(color)
-//   }
-// }
-
-function getRandom(min: number, max: number) {
-  return Math.floor(Math.random() * (max - min + 1) + min)
-}
-
 export default Index;
