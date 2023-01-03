@@ -9,10 +9,7 @@ export interface ApiMetadataResponse {
   image: string
 }
 
-export default async function handler(
-  req: NextApiRequest,
-  res: NextApiResponse<ApiMetadataResponse>
-) {
+export default async function handler(req: NextApiRequest, res: NextApiResponse<ApiMetadataResponse>) {
   const domain = req.query['domain'] as string
   const validDomain = domain.search('https://') != -1
 
