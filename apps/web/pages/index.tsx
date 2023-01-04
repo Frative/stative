@@ -3,7 +3,9 @@ import {Grid} from "../components/Grid";
 import {Button} from "../components/Button";
 import {Input} from "../components/Input";
 import { Card } from "../components/Card";
+import { MusicCover } from "../components/MusicCover";
 import { ChangeEvent, FormEvent, useEffect } from "react";
+import Router from "next/router";
 
 import { useStage } from "../hooks/useStage";
 
@@ -125,38 +127,12 @@ export function Index() {
         <>
           <h2 className="mb-2.5 text-neutral-500">Preview</h2>
           <Card>
-            <div
-              className="w-[540px] h-[540px] p-10 m-auto"
-            >
-              <div className="shadow-neutral-500 w-full h-full rounded-lg shadow-sm py-10 px-5 flex flex-col">
-                <div className="flex w-full">
-                  <div className="w-[150px] h-[150px] min-w-[150px]">
-                    <img
-                      className="object-cover object-center h-[inherit] rounded-md"
-                      alt="Song cover"
-                      src={stage.state.metadata.image}
-                    />
-                  </div>
-
-                  <div className="ml-5">
-                    <div className="uppercase text-xl font-medium">{ stage.state.formMusicalCover.author }</div>
-                    <div className="text-sm uppercase">{ stage.state.formMusicalCover.name }</div>
-                  </div>
-                </div>
-
-                <div className="flex flex-1 items-center text-2xl font-light">
-                  {stage.state.formMusicalCover.phrase && (
-                    <div className="text-center flex-1">
-                      <span>&quot;</span>
-                      <span>{ stage.state.formMusicalCover.phrase }</span>
-                      <span>&quot;</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <div className="text-xs text-center my-2.5 tracking-widest">STATIVE</div>
-            </div>
+            <MusicCover
+              name={stage.state.formMusicalCover.name}
+              image={stage.state.metadata.image}
+              author={stage.state.formMusicalCover.author}
+              quote={stage.state.formMusicalCover.phrase}
+            />
           </Card>
         </>
       )}
@@ -164,6 +140,16 @@ export function Index() {
       <div className="flex justify-between">
         <Button
           title="Generate"
+          htmlButtonProps={{
+            onClick: () => {
+              fetchMusicCover({
+                name: stage.state.formMusicalCover.name,
+                image: stage.state.metadata.image,
+                author: stage.state.formMusicalCover.author,
+                quote: stage.state.formMusicalCover.phrase
+              })
+            }
+          }}
         ></Button>
 
         <div className="ml-2.5">
@@ -203,6 +189,13 @@ function setFormMusicalCover(stage: Stage<State>) {
       }
     })
   }
+}
+
+async function fetchMusicCover(args: { name: string, author: string, image: string, quote: string }) {
+  const { name, author, image, quote } = args
+  const url = '/generate/music_cover?name=' + name + '&author=' + author + '&image=' + image + '&quote=' + quote
+  const response = await fetch(url)
+  console.log(await response.json())
 }
 
 async function fetchMetadata(args: { domain: string }) {
