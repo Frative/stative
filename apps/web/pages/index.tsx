@@ -193,7 +193,7 @@ function setFormMusicalCover(stage: Stage<State>) {
 
 async function fetchMusicCover(args: { name: string, author: string, image: string, quote: string }) {
   const { name, author, image, quote } = args
-  const url = '/generate/music_cover?name=' + name + '&author=' + author + '&image=' + image + '&quote=' + quote
+  const url = '/api/generate/music_cover?name=' + name + '&author=' + author + '&image=' + image + '&quote=' + quote
   const response = await fetch(url)
   console.log(await response.json())
 }
