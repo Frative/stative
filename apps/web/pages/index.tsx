@@ -4,17 +4,15 @@ import {Button} from "../components/Button";
 import {Input} from "../components/Input";
 import { Card } from "../components/Card";
 import { MusicCover } from "../components/MusicCover";
-import { ChangeEvent, FormEvent, useEffect } from "react";
+import { ChangeEvent, FormEvent, MutableRefObject, useEffect, useRef } from "react";
 
 import { useStage } from "../hooks/useStage";
-
-import Image from 'next/image'
 
 import { Metadata, Stage } from '@stative/interfaces'
 
 interface State {
   metadata?: Metadata
-  musicCoverImage?: string
+  musicCoverUrl?: string
   formMusicalCover: {
     author: string
     name: string
@@ -25,7 +23,7 @@ interface State {
 
 const initialState: State = {
   metadata: undefined,
-  musicCoverImage: undefined,
+  musicCoverUrl: undefined,
   formMusicalCover: {
     author: 'Author',
     name: 'Song name',
@@ -34,6 +32,7 @@ const initialState: State = {
 }
 
 export function Index() {
+  const downloadRef = useRef<HTMLAnchorElement>(null)
   const stage = useStage<State>(initialState)
 
   useEffect(() => {
@@ -47,8 +46,6 @@ export function Index() {
       })
     }
   }, [stage.state.metadata])
-
-  console.log(stage.state.musicCoverImage)
 
   return (
     <Grid>
@@ -77,7 +74,7 @@ export function Index() {
       {!stage.state.metadata && (
         <Card>
           <div className="min-h-[300px] flex justify-center items-center">
-            <div className="text-xs text-center text-neutral-500">There are no songs loaded.</div>
+            <div className="text-xs text-center text-neutral-500">This is empty.</div>
           </div>
         </Card>
       )}
@@ -142,29 +139,48 @@ export function Index() {
         </>
       )}
 
-      <div className="flex justify-between">
-        <Button
-          title="Generate"
-          htmlButtonProps={{
-            onClick: generateMusicCover(stage)
-          }}
-        ></Button>
+      <div className="flex flex-col items-center">
+        {stage.state.metadata && !stage.state.musicCoverUrl && (
+          <div className="w-full max-w-[200px]">
+            <Button
+              title="Generate"
+              htmlButtonProps={{
+                onClick: generateMusicCover(stage)
+              }}
+            ></Button>
+          </div>
+        )}
 
-        <div className="ml-2.5">
-          <Button
-            title="Reset"
-            htmlButtonProps={{
-              onClick: () => stage.commitState(initialState)
-            }}
-          ></Button>
-        </div>
+        {stage.state.musicCoverUrl && (
+          <div className="w-full max-w-[200px]">
+            <Button
+              title="Download"
+              htmlButtonProps={{
+                onClick: downloadMusicCover(downloadRef)
+              }}
+            ></Button>
+          </div>
+        )}
+
+        {stage.state.metadata && (
+          <div className="my-2.5 w-full max-w-[200px]">
+            <Button
+              title="Clean"
+              htmlButtonProps={{
+                onClick: () => stage.commitState(initialState)
+              }}
+            ></Button>
+          </div>
+        )}
+
+        <a ref={downloadRef} className="hidden" href={stage.state.musicCoverUrl} download="music_cover.jpeg"></a>
       </div>
-
-      {stage.state.musicCoverImage && (
-        <Image src={'data:image/jpeg;base64,' + stage.state.musicCoverImage} alt="im" />
-      )}
     </Grid>
   );
+}
+
+function downloadMusicCover(ref: MutableRefObject<HTMLAnchorElement>) {
+  return async () => ref.current?.click()
 }
 
 function submitSearch(stage: Stage<State>) {
@@ -201,10 +217,9 @@ function generateMusicCover(stage: Stage<State>) {
       author: stage.state.formMusicalCover.author,
       quote: stage.state.formMusicalCover.phrase
     })
-    // console.log(musicCoverImage.data)
 
-    // fs.writeFile('hello.jpeg', Buffer.from(musicCoverImage.src.data), () => null)
-    // stage.commitState({ ...stage.state, musicCoverImage: Buffer.from(musicCoverImage.src.data, 'base64') })
+    const musicCoverUrl = URL.createObjectURL(await musicCoverImage.blob())
+    stage.commitState({ ...stage.state, musicCoverUrl })
   }
 }
 
@@ -217,8 +232,7 @@ async function fetchMusicCoverImage(args: { name: string, author: string, image:
   url.searchParams.append('image', encodeURIComponent(image))
   url.searchParams.append('quote', quote)
 
-  const response = await fetch(url.href)
-  return await response.json()
+  return await fetch(url.href)
 }
 
 async function fetchMetadata(args: { domain: string }) {

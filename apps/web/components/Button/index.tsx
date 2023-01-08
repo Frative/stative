@@ -18,7 +18,8 @@ export function Button(props: ButtonProps) {
         'transition-all ease-in-out hover:bg-blue-500 hover:duration-300',
         'active:bg-blue-400 active:duration-100',
         'text-white',
-        'text-xs'
+        'text-xs',
+        'w-[inherit]'
       )}
     >
       { props.title }

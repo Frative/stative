@@ -7,18 +7,17 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   url.searchParams.append('name', req.query['name'] as string)
   url.searchParams.append('quote', req.query['quote'] as string)
   url.searchParams.append('author', req.query['author'] as string)
-  url.searchParams.append('image', req.query['image'] as string)
+  url.searchParams.append('image', decodeURIComponent(req.query['image'] as string))
 
   const browser = await puppeteer.launch()
   const page = await browser.newPage()
   await page.setViewport({ width: 540, height: 540 })
   await page.goto(url.href, { waitUntil: 'networkidle0' })
 
-  const imageBuffer = await page.screenshot({ path: '/test.jpeg', encoding: 'binary' })
+  const imageBuffer = await page.screenshot({ encoding: 'binary', type: 'jpeg', quality: 100 })
   await browser.close()
 
-  res.setHeader('Content-Type', 'image/jpg')
+  res.setHeader('Content-Type', 'image/jpeg')
+  res.setHeader('Content-Disposition', 'attachment; filename="filename.jpg"; filename*="filename.jpg"');
   res.send(imageBuffer)
-
-  // res.status(200).json({ src: ress })
 }
