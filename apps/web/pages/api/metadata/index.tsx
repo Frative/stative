@@ -10,7 +10,7 @@ export interface ApiMetadataResponse {
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<ApiMetadataResponse>) {
-  const domain = req.query['domain'] as string
+  const domain = decodeURIComponent(req.query['domain'] as string)
   const validDomain = domain.search('https://') != -1
 
   if (validDomain) {

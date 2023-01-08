@@ -5,14 +5,16 @@ import {Input} from "../components/Input";
 import { Card } from "../components/Card";
 import { MusicCover } from "../components/MusicCover";
 import { ChangeEvent, FormEvent, useEffect } from "react";
-import Router from "next/router";
 
 import { useStage } from "../hooks/useStage";
+
+import Image from 'next/image'
 
 import { Metadata, Stage } from '@stative/interfaces'
 
 interface State {
   metadata?: Metadata
+  musicCoverImage?: string
   formMusicalCover: {
     author: string
     name: string
@@ -23,6 +25,7 @@ interface State {
 
 const initialState: State = {
   metadata: undefined,
+  musicCoverImage: undefined,
   formMusicalCover: {
     author: 'Author',
     name: 'Song name',
@@ -44,6 +47,8 @@ export function Index() {
       })
     }
   }, [stage.state.metadata])
+
+  console.log(stage.state.musicCoverImage)
 
   return (
     <Grid>
@@ -141,14 +146,7 @@ export function Index() {
         <Button
           title="Generate"
           htmlButtonProps={{
-            onClick: () => {
-              fetchMusicCover({
-                name: stage.state.formMusicalCover.name,
-                image: stage.state.metadata.image,
-                author: stage.state.formMusicalCover.author,
-                quote: stage.state.formMusicalCover.phrase
-              })
-            }
+            onClick: generateMusicCover(stage)
           }}
         ></Button>
 
@@ -161,6 +159,10 @@ export function Index() {
           ></Button>
         </div>
       </div>
+
+      {stage.state.musicCoverImage && (
+        <Image src={'data:image/jpeg;base64,' + stage.state.musicCoverImage} alt="im" />
+      )}
     </Grid>
   );
 }
@@ -191,15 +193,39 @@ function setFormMusicalCover(stage: Stage<State>) {
   }
 }
 
-async function fetchMusicCover(args: { name: string, author: string, image: string, quote: string }) {
+function generateMusicCover(stage: Stage<State>) {
+  return async () => {
+    const musicCoverImage = await fetchMusicCoverImage({
+      name: stage.state.formMusicalCover.name,
+      image: stage.state.metadata.image,
+      author: stage.state.formMusicalCover.author,
+      quote: stage.state.formMusicalCover.phrase
+    })
+    // console.log(musicCoverImage.data)
+
+    // fs.writeFile('hello.jpeg', Buffer.from(musicCoverImage.src.data), () => null)
+    // stage.commitState({ ...stage.state, musicCoverImage: Buffer.from(musicCoverImage.src.data, 'base64') })
+  }
+}
+
+async function fetchMusicCoverImage(args: { name: string, author: string, image: string, quote: string }) {
   const { name, author, image, quote } = args
-  const url = '/api/generate/music_cover?name=' + name + '&author=' + author + '&image=' + image + '&quote=' + quote
-  const response = await fetch(url)
-  console.log(await response.json())
+
+  const url = new URL(process.env.NEXT_PUBLIC_HOST + '/api/generate/music_cover')
+  url.searchParams.append('name', name)
+  url.searchParams.append('author', author)
+  url.searchParams.append('image', encodeURIComponent(image))
+  url.searchParams.append('quote', quote)
+
+  const response = await fetch(url.href)
+  return await response.json()
 }
 
 async function fetchMetadata(args: { domain: string }) {
-  const response = await fetch('/api/metadata?domain=' + args.domain)
+  const url = new URL(process.env.NEXT_PUBLIC_HOST + '/api/metadata')
+  url.searchParams.append('domain', encodeURIComponent(args.domain))
+
+  const response = await fetch(url.href)
   return await response.json()
 }
 
