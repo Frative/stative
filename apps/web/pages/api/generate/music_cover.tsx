@@ -18,6 +18,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   await browser.close()
 
   res.setHeader('Content-Type', 'image/jpeg')
-  res.setHeader('Content-Disposition', 'attachment; filename="filename.jpg"; filename*="filename.jpg"');
+  res.setHeader('Content-Disposition', 'attachment');
   res.send(imageBuffer)
 }
