@@ -10,6 +10,7 @@ import { useStage } from "../hooks/useStage";
 
 import { Metadata, Stage } from '@stative/interfaces'
 import { GlobalLoader } from "../components/GlobalLoader";
+import { Layout } from "../components/Layout";
 
 interface State {
   metadata?: Metadata
@@ -52,140 +53,142 @@ export function Index() {
   }, [stage.state.metadata])
 
   return (
-    <Grid>
-      <form
-        onSubmit={submitSearch(stage)} className="flex my-10"
-      >
-        <div className="mr-5 flex flex-1">
-          <Input
-            htmlInputProps={{
-              placeholder: "Paste a link here from spotify, soundcloud, youtube, etc...",
-              type: 'text',
-              id: 'search',
-              name: 'search',
-              disabled: !!stage.state.musicCoverUrl
-            }} 
-          />
-        </div>
-        <Button
-          title="Search song"
-          htmlButtonProps={{
-            type: 'submit',
-            onClick: null
-          }}
-        ></Button>
-      </form>
-
-      {!stage.state.metadata && (
-        <Card>
-          <div className="min-h-[300px] flex justify-center items-center">
-            <div className="text-xs text-center text-neutral-500">This is empty.</div>
-          </div>
-        </Card>
-      )}
-
-      {stage.state.metadata && (
-        <>
-          <h2 className="mb-2.5 text-neutral-500">Information</h2>
-          <Card>
-            <div className="mb-5">
-              <h3 className="mb-1 text-neutral-500 text-xs font-light">Song name</h3>
-              <Input
-                htmlInputProps={{
-                  type: 'text',
-                  id: 'name',
-                  name: 'name',
-                  value: stage.state.formMusicalCover.name,
-                  onChange: setFormMusicalCover(stage),
-                  disabled: !!stage.state.musicCoverUrl
-                }}
-              />
-            </div>
-
-            <div className="mb-5">
-              <h3 className="mb-1 text-neutral-500 text-xs font-light">Author</h3>
-              <Input
-                htmlInputProps={{
-                  type: 'text',
-                  id: 'author',
-                  name: 'author',
-                  value: stage.state.formMusicalCover.author,
-                  onChange: setFormMusicalCover(stage),
-                  disabled: !!stage.state.musicCoverUrl
-                }}
-              />
-            </div>
-
-            <div>
-              <h3 className="mb-1 text-neutral-500 text-xs font-light">Quote</h3>
-              <Input
-                htmlInputProps={{
-                  type: 'text',
-                  id: 'phrase',
-                  name: 'phrase',
-                  value: stage.state.formMusicalCover.phrase,
-                  onChange: setFormMusicalCover(stage),
-                  disabled: !!stage.state.musicCoverUrl
-                }}
-              />
-            </div>
-          </Card>
-        </>
-      )}
-
-      {stage.state.metadata && (
-        <>
-          <h2 className="mb-2.5 text-neutral-500">Preview</h2>
-          <Card>
-            <MusicCover
-              name={stage.state.formMusicalCover.name}
-              image={stage.state.metadata.image}
-              author={stage.state.formMusicalCover.author}
-              quote={stage.state.formMusicalCover.phrase}
+    <Layout>
+      <Grid>
+        <form
+          onSubmit={submitSearch(stage)} className="flex my-10"
+        >
+          <div className="mr-5 flex flex-1">
+            <Input
+              htmlInputProps={{
+                placeholder: "Paste a link here from spotify, soundcloud, youtube, etc...",
+                type: 'text',
+                id: 'search',
+                name: 'search',
+                disabled: !!stage.state.musicCoverUrl
+              }} 
             />
+          </div>
+          <Button
+            title="Search song"
+            htmlButtonProps={{
+              type: 'submit',
+              onClick: null
+            }}
+          ></Button>
+        </form>
+
+        {!stage.state.metadata && (
+          <Card>
+            <div className="min-h-[300px] flex justify-center items-center">
+              <div className="text-xs text-center text-neutral-500">This is empty.</div>
+            </div>
           </Card>
-        </>
-      )}
-
-      <div className="flex flex-col items-center">
-        {stage.state.metadata && !stage.state.musicCoverUrl && (
-          <div className="w-full max-w-[200px]">
-            <Button
-              title="Generate"
-              htmlButtonProps={{
-                onClick: generateMusicCover(stage)
-              }}
-            ></Button>
-          </div>
-        )}
-
-        {stage.state.musicCoverUrl && (
-          <div className="w-full max-w-[200px]">
-            <Button
-              title="Download"
-              htmlButtonProps={{
-                onClick: downloadMusicCover(downloadRef)
-              }}
-            ></Button>
-          </div>
         )}
 
         {stage.state.metadata && (
-          <div className="my-2.5 w-full max-w-[200px]">
-            <Button
-              title="Clean"
-              htmlButtonProps={{
-                onClick: () => stage.commitState(initialState)
-              }}
-            ></Button>
-          </div>
+          <>
+            <h2 className="mb-2.5 text-neutral-500">Information</h2>
+            <Card>
+              <div className="mb-5">
+                <h3 className="mb-1 text-neutral-500 text-xs font-light">Song name</h3>
+                <Input
+                  htmlInputProps={{
+                    type: 'text',
+                    id: 'name',
+                    name: 'name',
+                    value: stage.state.formMusicalCover.name,
+                    onChange: setFormMusicalCover(stage),
+                    disabled: !!stage.state.musicCoverUrl
+                  }}
+                />
+              </div>
+
+              <div className="mb-5">
+                <h3 className="mb-1 text-neutral-500 text-xs font-light">Author</h3>
+                <Input
+                  htmlInputProps={{
+                    type: 'text',
+                    id: 'author',
+                    name: 'author',
+                    value: stage.state.formMusicalCover.author,
+                    onChange: setFormMusicalCover(stage),
+                    disabled: !!stage.state.musicCoverUrl
+                  }}
+                />
+              </div>
+
+              <div>
+                <h3 className="mb-1 text-neutral-500 text-xs font-light">Quote</h3>
+                <Input
+                  htmlInputProps={{
+                    type: 'text',
+                    id: 'phrase',
+                    name: 'phrase',
+                    value: stage.state.formMusicalCover.phrase,
+                    onChange: setFormMusicalCover(stage),
+                    disabled: !!stage.state.musicCoverUrl
+                  }}
+                />
+              </div>
+            </Card>
+          </>
         )}
 
-        <a ref={downloadRef} className="hidden" href={stage.state.musicCoverUrl} download={stage.state.musicCoverFilename}></a>
-      </div>
+        {stage.state.metadata && (
+          <>
+            <h2 className="mb-2.5 text-neutral-500">Preview</h2>
+            <Card>
+              <MusicCover
+                name={stage.state.formMusicalCover.name}
+                image={stage.state.metadata.image}
+                author={stage.state.formMusicalCover.author}
+                quote={stage.state.formMusicalCover.phrase}
+              />
+            </Card>
+          </>
+        )}
 
-      {stage.state.loading && <GlobalLoader />}
-    </Grid>
+        <div className="flex flex-col items-center">
+          {stage.state.metadata && !stage.state.musicCoverUrl && (
+            <div className="w-full max-w-[200px]">
+              <Button
+                title="Generate"
+                htmlButtonProps={{
+                  onClick: generateMusicCover(stage)
+                }}
+              ></Button>
+            </div>
+          )}
+
+          {stage.state.musicCoverUrl && (
+            <div className="w-full max-w-[200px]">
+              <Button
+                title="Download"
+                htmlButtonProps={{
+                  onClick: downloadMusicCover(downloadRef)
+                }}
+              ></Button>
+            </div>
+          )}
+
+          {stage.state.metadata && (
+            <div className="my-2.5 w-full max-w-[200px]">
+              <Button
+                title="Clean"
+                htmlButtonProps={{
+                  onClick: () => stage.commitState(initialState)
+                }}
+              ></Button>
+            </div>
+          )}
+
+          <a ref={downloadRef} className="hidden" href={stage.state.musicCoverUrl} download={stage.state.musicCoverFilename}></a>
+        </div>
+
+        {stage.state.loading && <GlobalLoader />}
+      </Grid>
+    </Layout>
   );
 }
 
