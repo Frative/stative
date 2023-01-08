@@ -28,11 +28,13 @@ export function MusicCover(props: MusicCoverProps) {
         </div>
 
         <div className="flex flex-1 items-center text-2xl font-light">
-          <div className="text-center flex-1">
-            <span>&quot;</span>
-            <span>{ props.quote }</span>
-            <span>&quot;</span>
-          </div>
+          {props.quote && (
+            <div className="text-center flex-1">
+              <span>&quot;</span>
+              <span>{ props.quote }</span>
+              <span>&quot;</span>
+            </div>
+          )}
         </div>
       </div>
 

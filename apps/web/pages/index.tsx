@@ -9,10 +9,13 @@ import { ChangeEvent, FormEvent, MutableRefObject, useEffect, useRef } from "rea
 import { useStage } from "../hooks/useStage";
 
 import { Metadata, Stage } from '@stative/interfaces'
+import { GlobalLoader } from "../components/GlobalLoader";
 
 interface State {
   metadata?: Metadata
   musicCoverUrl?: string
+  musicCoverFilename?: string
+  loading: boolean
   formMusicalCover: {
     author: string
     name: string
@@ -24,6 +27,7 @@ interface State {
 const initialState: State = {
   metadata: undefined,
   musicCoverUrl: undefined,
+  loading: false,
   formMusicalCover: {
     author: 'Author',
     name: 'Song name',
@@ -59,6 +63,7 @@ export function Index() {
               type: 'text',
               id: 'search',
               name: 'search',
+              disabled: !!stage.state.musicCoverUrl
             }} 
           />
         </div>
@@ -91,7 +96,8 @@ export function Index() {
                   id: 'name',
                   name: 'name',
                   value: stage.state.formMusicalCover.name,
-                  onChange: setFormMusicalCover(stage)
+                  onChange: setFormMusicalCover(stage),
+                  disabled: !!stage.state.musicCoverUrl
                 }}
               />
             </div>
@@ -104,7 +110,8 @@ export function Index() {
                   id: 'author',
                   name: 'author',
                   value: stage.state.formMusicalCover.author,
-                  onChange: setFormMusicalCover(stage)
+                  onChange: setFormMusicalCover(stage),
+                  disabled: !!stage.state.musicCoverUrl
                 }}
               />
             </div>
@@ -117,7 +124,8 @@ export function Index() {
                   id: 'phrase',
                   name: 'phrase',
                   value: stage.state.formMusicalCover.phrase,
-                  onChange: setFormMusicalCover(stage)
+                  onChange: setFormMusicalCover(stage),
+                  disabled: !!stage.state.musicCoverUrl
                 }}
               />
             </div>
@@ -173,8 +181,10 @@ export function Index() {
           </div>
         )}
 
-        <a ref={downloadRef} className="hidden" href={stage.state.musicCoverUrl} download="music_cover.jpeg"></a>
+        <a ref={downloadRef} className="hidden" href={stage.state.musicCoverUrl} download={stage.state.musicCoverFilename}></a>
       </div>
+
+      {stage.state.loading && <GlobalLoader />}
     </Grid>
   );
 }
@@ -186,12 +196,13 @@ function downloadMusicCover(ref: MutableRefObject<HTMLAnchorElement>) {
 function submitSearch(stage: Stage<State>) {
   return async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    stage.commitState({ ...stage.state, loading: true })
 
     const searchValue: HTMLInputElement = e.currentTarget.elements['search']
 
     if (searchValue) {
       const metadata = await fetchMetadata({ domain: searchValue.value })
-      stage.commitState({ ...stage.state, metadata })
+      stage.commitState({ ...stage.state, metadata, loading: false })
     }
   }
 }
@@ -211,6 +222,8 @@ function setFormMusicalCover(stage: Stage<State>) {
 
 function generateMusicCover(stage: Stage<State>) {
   return async () => {
+    stage.commitState({ ...stage.state, loading: true })
+
     const musicCoverImage = await fetchMusicCoverImage({
       name: stage.state.formMusicalCover.name,
       image: stage.state.metadata.image,
@@ -219,7 +232,12 @@ function generateMusicCover(stage: Stage<State>) {
     })
 
     const musicCoverUrl = URL.createObjectURL(await musicCoverImage.blob())
-    stage.commitState({ ...stage.state, musicCoverUrl })
+    stage.commitState({
+      ...stage.state,
+      musicCoverUrl,
+      loading: false,
+      musicCoverFilename: Date.now() + '_' + Math.trunc(Math.random() * 10000) + '.jpeg'
+    })
   }
 }
 

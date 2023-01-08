@@ -18,7 +18,8 @@ export function Input(props: InputProps) {
           'rounded-lg',
           'px-2.5',
           'text-xs',
-          'min-h-[36px]'
+          'min-h-[36px]',
+          'disabled:bg-neutral-100 disabled:border-neutral-300',
         )}
       />
     </>
