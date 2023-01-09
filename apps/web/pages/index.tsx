@@ -52,6 +52,7 @@ export function Index() {
     }
   }, [stage.state.metadata])
 
+  console.log('dede', process.env.NEXT_PUBLIC_HOST)
   return (
     <Layout>
       <Grid>
@@ -257,7 +258,6 @@ async function fetchMusicCoverImage(args: { name: string, author: string, image:
 }
 
 async function fetchMetadata(args: { domain: string }) {
-  console.log(process.env.NEXT_PUBLIC_HOST)
   const url = new URL(process.env.NEXT_PUBLIC_HOST + '/api/metadata')
   url.searchParams.append('domain', encodeURIComponent(args.domain))
 
