@@ -9,6 +9,7 @@
     "@nestjs/core": "^9.0.0",
     "@nestjs/platform-express": "^9.0.0",
     "@prisma/client": "^4.8.0",
+    "classnames": "^2.3.2",
     "core-js": "^3.6.5",
     "metascraper": "^5.32.3",
     "metascraper-image": "^5.32.3",
