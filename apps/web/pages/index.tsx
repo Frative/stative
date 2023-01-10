@@ -52,7 +52,6 @@ export function Index() {
     }
   }, [stage.state.metadata])
 
-  console.log('dede', process.env.NEXT_PUBLIC_HOST)
   return (
     <Layout>
       <Grid>
