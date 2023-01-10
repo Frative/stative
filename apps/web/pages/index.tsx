@@ -239,7 +239,7 @@ function generateMusicCover(stage: Stage<State>) {
       ...stage.state,
       musicCoverUrl,
       loading: false,
-      musicCoverFilename: Date.now() + '_' + Math.trunc(Math.random() * 10000) + '.png'
+      musicCoverFilename: Date.now() + '_' + Math.trunc(Math.random() * 10000) + '.jpeg'
     })
   }
 }
