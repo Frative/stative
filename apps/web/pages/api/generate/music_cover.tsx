@@ -14,7 +14,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   await page.setViewport({ width: 540, height: 540 })
   await page.goto(url.href, { waitUntil: 'networkidle0' })
 
-  const imageBuffer = await page.screenshot({ encoding: 'binary', type: 'png', quality: 100 })
+  const imageBuffer = await page.screenshot({ encoding: 'binary', type: 'jpeg', quality: 100 })
   await browser.close()
 
   res.setHeader('Content-Type', 'image/png')
