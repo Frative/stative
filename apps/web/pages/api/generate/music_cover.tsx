@@ -3,7 +3,7 @@ import puppeteer from 'puppeteer'
 
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const url = new URL(process.env.HOST + '/generate/music_cover')
+  const url = new URL(process.env.NEXT_PUBLIC_HOST + '/generate/music_cover')
   url.searchParams.append('name', req.query['name'] as string)
   url.searchParams.append('quote', req.query['quote'] as string)
   url.searchParams.append('author', req.query['author'] as string)
