@@ -17,7 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const imageBuffer = await page.screenshot({ encoding: 'binary', type: 'png', quality: 100 })
   await browser.close()
 
-  res.setHeader('Content-Type', 'image/jpeg')
+  res.setHeader('Content-Type', 'image/png')
   res.setHeader('Content-Disposition', 'attachment');
   res.send(imageBuffer)
 }
